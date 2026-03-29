@@ -1,6 +1,6 @@
 # Portfolio Site
 
-This is my personal portfolio website.
+This is my personal portfolio website showcasing projects in AI, robotics, and software engineering.
 
 ## Overview
 This site showcases my projects, development logs, and ongoing work in AI, robotics, and software engineering.
