@@ -2,6 +2,10 @@
 
 This is my personal portfolio website showcasing projects in AI, robotics, and software engineering.
 
+## Demo
+
+https://aoi-labs.github.io/
+
 ## Overview
 This site showcases my projects, development logs, and ongoing work in AI, robotics, and software engineering.
 
