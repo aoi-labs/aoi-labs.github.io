@@ -1,0 +1,152 @@
+---
+// 静的モード（デフォルト）で動作
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const allEntries = await getCollection('logs');
+
+// 初期表示用にソート
+const sortedLogs = allEntries.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+---
+
+<Layout title="LOG // AOI_LABS">
+  <main class="max-w-5xl mx-auto px-4 md:px-6 py-12 md:py-20">
+    <header class="mb-12 md:mb-16">
+      <span class="font-headline text-[#e4f700] tracking-[0.3em] text-[10px] uppercase mb-4 block underline decoration-[#00eefc] decoration-2 underline-offset-8">Development_Log_v1.8</span>
+      <h1 class="font-headline text-4xl md:text-7xl font-bold uppercase leading-none mt-6">
+        Activity <br/><span class="text-[#00eefc]">History</span>
+      </h1>
+     
+      <div class="flex flex-col md:flex-row flex-wrap gap-4 md:gap-8 mt-10 p-4 border border-white/5 bg-white/[0.02] rounded-sm">
+        <div>
+          <span class="block text-[10px] text-white/40 uppercase tracking-widest mb-1">Displaying</span>
+          <span id="filter-display" class="text-xl md:text-2xl font-headline font-bold text-[#e4f700]">All_Records</span>
+        </div>
+        <div class="hidden md:block w-[1px] bg-white/10"></div>
+        <div>
+          <span class="block text-[10px] text-white/40 uppercase tracking-widest mb-1">Total Logs</span>
+          <span id="total-count" class="text-xl md:text-2xl font-headline font-bold text-white tracking-tight italic">{sortedLogs.length}</span>
+        </div>
+        <div id="clear-filter-container" class="hidden md:ml-auto flex items-center">
+            <a href="/log" class="text-[10px] font-black uppercase tracking-widest text-[#00eefc] border border-[#00eefc]/30 px-3 py-2 hover:bg-[#00eefc] hover:text-black transition-all">
+              Clear Filter [×]
+            </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="relative border-l border-white/10 ml-2 md:ml-0">
+      {sortedLogs.map((entry) => (
+        <article class="log-entry relative mb-16 md:mb-24 md:grid md:grid-cols-[180px_1fr] gap-6 md:gap-12 group" data-project={entry.data.project.toLowerCase()}>
+          <div class="mb-10 md:mb-8 transition-transform group-hover:translate-x-1 pl-6 md:pl-8">
+            <time class="block font-headline text-xs md:text-sm font-bold text-[#00eefc] mb-2">{entry.data.date}</time>
+            <span class="block text-[9px] md:text-[10px] uppercase tracking-widest text-white/40 font-bold leading-tight">
+              Project:<br/>
+              <span class="text-white/80">{entry.data.project}</span>
+            </span>
+          </div>
+
+          <div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-[#e4f700] shadow-[0_0_10px_#e4f700] z-10"></div>
+
+          <div class="glass-card p-5 md:p-8 border border-white/5 relative overflow-hidden transition-all hover:bg-white/[0.03] ml-6 md:ml-0">
+            <div class="absolute top-0 right-0 bg-[#e4f700] text-black text-[8px] md:text-[9px] font-black uppercase px-2 md:px-3 py-1 tracking-widest">
+              Stage: {entry.data.stage}
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mt-4">
+              <div class="space-y-6">
+                <section>
+                  <h3 class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-[#e4f700] mb-3">01. What I Did</h3>
+                  <ul class="space-y-2">
+                    {entry.data.whatIDid.map((item) => <li class="text-xs md:text-sm text-[#ababab] font-light flex gap-2"><span>—</span> {item}</li>)}
+                  </ul>
+                </section>
+                <section>
+                  <h3 class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-[#00eefc] mb-3">02. Accomplished</h3>
+                  <ul class="space-y-2">
+                    {entry.data.whatAccomplished.map((item) => <li class="text-xs md:text-sm text-white/90 font-light flex gap-2"><span>✓</span> {item}</li>)}
+                  </ul>
+                </section>
+              </div>
+              <div class="space-y-6">
+                <section class="p-3 md:p-4 bg-red-500/5 border border-red-500/10 rounded-sm">
+                  <h3 class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-red-400 mb-3">03. Issues</h3>
+                  <ul class="space-y-2">
+                    {entry.data.issues.map((item) => <li class="text-xs md:text-sm text-red-200/60 font-light flex gap-2"><span>!</span> {item}</li>)}
+                  </ul>
+                </section>
+                <section>
+                  <h3 class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-white/60 mb-3 underline decoration-white/20 underline-offset-4">04. Next Steps</h3>
+                  <ul class="space-y-2">
+                    {entry.data.nextSteps.map((item) => <li class="text-xs md:text-sm text-[#ababab] font-light flex gap-2 italic"><span>→</span> {item}</li>)}
+                  </ul>
+                </section>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))}
+      <div id="no-results" class="hidden py-20 text-center border border-dashed border-white/10 opacity-50">
+        <p class="font-headline text-sm uppercase tracking-widest text-white/40">No_logs_found.</p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script is:inline>
+  function initFilter() {
+    const params = new URLSearchParams(window.location.search);
+    const projectFilter = params.get('project')?.toLowerCase();
+   
+    // 全てのログ要素を取得
+    const entries = document.querySelectorAll('.log-entry');
+    const displaySpan = document.getElementById('filter-display');
+    const countSpan = document.getElementById('total-count');
+    const clearBtn = document.getElementById('clear-filter-container');
+    const noResults = document.getElementById('no-results');
+   
+    if (!entries.length) return; // ログがない場合は何もしない
+
+    let visibleCount = 0;
+
+    if (projectFilter) {
+      if (displaySpan) displaySpan.textContent = projectFilter.toUpperCase();
+      if (clearBtn) clearBtn.classList.remove('hidden');
+     
+      entries.forEach(entry => {
+        const project = entry.getAttribute('data-project');
+        // ここが肝心：プロジェクト名が含まれているかチェック
+        if (project && project.includes(projectFilter)) {
+          entry.style.display = 'block'; // 強制的に表示
+          visibleCount++;
+        } else {
+          entry.style.display = 'none';  // 強制的に非表示
+        }
+      });
+    } else {
+      if (displaySpan) displaySpan.textContent = 'All_Records';
+      if (clearBtn) clearBtn.classList.add('hidden');
+      entries.forEach(entry => {
+        entry.style.display = 'block'; // 全て表示
+      });
+      visibleCount = entries.length;
+    }
+
+    if (countSpan) countSpan.textContent = visibleCount.toString();
+    if (noResults) {
+      if (visibleCount === 0) noResults.classList.remove('hidden');
+      else noResults.classList.add('hidden');
+    }
+  }
+
+  // 1. スクリプトが読み込まれたら即実行（これが足りていませんでした）
+  initFilter();
+
+  // 2. 念のためページ読み込み完了時にも実行
+  window.addEventListener('load', initFilter);
+ 
+  // 3. ブラウザの「戻る・進む」ボタン対策
+  window.addEventListener('popstate', initFilter);
+</script>
+
